@@ -38,7 +38,7 @@ def test2():
 
 def test1():
     # server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="4101")
-    server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="5053")
+    server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="5053", rlmutil_exe="S:/Github/StudioApi/bin/rlm/rlmutil.exe")
     #pprint(server_data)
     #print(dir(server_data))
 

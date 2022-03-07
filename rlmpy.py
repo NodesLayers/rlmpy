@@ -12,8 +12,13 @@ REGEX_LICENSE3 = r"^[A-Za-z0-9_]+: [0-9]+, min_remove: [0-9_]+, total checkouts:
 
 
 class rlmInfo():
-    def __init__(self, server=None, port=None, product=None, isv=None, users=None):
+    def __init__(self, server=None, port=None, product=None, isv=None, users=None, rlmutil_exe=None):
         """Connects to the RLM server, gets the output from rlmutil and parses it into various dictionaries use"""
+        if not rlmutil_exe:
+            print("Error: no rlmutil exectuble specified!")
+            return None
+        else:
+            self.rlmutil_exe = rlmutil_exe
         self.handles = None
         self.reserved = None
         self.available = None
@@ -138,14 +143,13 @@ class rlmInfo():
             self.reserved = reserved_amount
             self.handles = handles
 
-
     def get_data(self):
         """
         Gets the raw output from rlmutil
         .\rlmutil.exe rlmstat - c 4101 @ license.acme.com - i foundry - p nukex_i - a
         """
 
-        base_args = [rlmutil_exe(), "rlmstat", "-c", "{}@{}".format(self.port, self.server)]
+        base_args = [self.rlmutil_exe, "rlmstat", "-c", "{}@{}".format(self.port, self.server)]
         command_args = base_args
         command_args.append("-a")
 
@@ -173,20 +177,3 @@ class rlmInfo():
         output = proc.stdout.read().decode("utf-8")
 
         self.raw_data = output
-
-
-def rlmutil_exe():
-    """Gets the executable path depending on os"""
-    if "RLMUTIL_PATH" in os.environ:
-        print(os.environ["RLMUTIL_PATH"])
-        return os.environ["RLMUTIL_PATH"]
-
-    bin_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), "bin")
-    operating_system = platform.platform()
-
-    if "windows" in operating_system.lower():
-        exe = os.path.join(bin_folder, "rlm", "rlmutil.exe").replace("\\", "/")
-    else:
-        exe = os.path.join(bin_folder, "rlm", "rlmutil").replace("\\", "/")
-    print(exe)
-    return exe
