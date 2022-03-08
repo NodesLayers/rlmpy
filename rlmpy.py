@@ -14,25 +14,35 @@ REGEX_LICENSE3 = r"^[A-Za-z0-9_]+: [0-9]+, min_remove: [0-9_]+, total checkouts:
 class rlmInfo():
     def __init__(self, server=None, port=None, product=None, isv=None, users=None, rlmutil_exe=None):
         """Connects to the RLM server, gets the output from rlmutil and parses it into various dictionaries use"""
+
+        # rlmutril exe to use
         if not rlmutil_exe:
             print("Error: no rlmutil exectuble specified!")
-            return None
         else:
             self.rlmutil_exe = rlmutil_exe
+
+        # server
+        self.server = server
+        if not server:
+            print("Error: no server specified!")
+
+        # port
+        self.port = port
+        if not port:
+            print("Error: no port specified!")
+
+        # handles
+        self.raw_handles = None
         self.handles = None
+        self.handles_by_product = None
+
+        #
         self.reserved = None
         self.available = None
         self.counts = None
         self.raw_data = None
         self.licenses = None
-        self.server = server
-        if not server:
-            print("Error: no server specified!")
-            return None
-        self.port = port
-        if not port:
-            print("Error: no port specified!")
-            return None
+
         self.product = product
         self.isv = isv
         self.users = users
@@ -82,7 +92,7 @@ class rlmInfo():
         counts = {}
         reserved_amount = {}
         for item in license_data_list:
-            print(item[1])
+            # print(item[1])
             # first line data
             # hieroplayer_i v2022.1107, pool: 3
             license = item[0].split(" ")[0].strip()
@@ -141,7 +151,47 @@ class rlmInfo():
             self.counts = counts
             self.available = counts
             self.reserved = reserved_amount
-            self.handles = handles
+
+            # save the raw handles and refresh the handle list and per license dict
+            self.raw_handles = handles
+            self.refresh_handles()
+
+    def refresh_handles(self):
+        """Uses self.raw_handles to parse the handles as a list and a as a dict per license"""
+        # output a dictionary per license in use
+        filtered_handles = []
+        for handle in self.raw_handles:
+            handle = re.split(r"[0-9]{1}/[0-9]{1} ", handle)[0]
+
+            # user_at_machine = re.findall(handle_user_at_machine_regex, handle)[0]
+            # data = {
+            #     "product": handle.split(" ")[0],
+            #     "user": user_at_machine.split("@")[0],
+            #     "machine": user_at_machine.split("@")[1],
+            # }
+            if handle not in filtered_handles:
+                filtered_handles.append(handle)
+
+        filtered_handles.sort()
+        self.handles = filtered_handles
+
+        products = []
+        handles_by_product = {}
+        for handle in filtered_handles:
+            product = handle.split(" ")[0]
+            user = handle.split(":")[-1].split("@")[0].strip()
+            machine = handle.split(":")[-1].split("@")[1].strip()
+            if product not in products:
+                handles_by_product[product] = {"users": [user], "machines": [machine],
+                                               "user@machine": ["{}@{}".format(user, machine)]}
+                products.append(product)
+            else:
+                # update users list
+                handles_by_product[product]["users"].append(user)
+                handles_by_product[product]["machines"].append(machine)
+                handles_by_product[product]["user@machine"].append("{}@{}".format(user, machine))
+
+        self.handles_by_product = handles_by_product
 
     def get_data(self):
         """

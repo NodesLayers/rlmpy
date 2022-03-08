@@ -37,21 +37,22 @@ def test2():
 
 
 def test1():
-    # server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="4101")
-    server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="5053", rlmutil_exe="S:/Github/StudioApi/bin/rlm/rlmutil.exe")
+    server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="4101", rlmutil_exe="S:/Github/StudioApi/bin/rlm/rlmutil.exe")
+    # server_data = rlmpy.rlmInfo(server="license.lola.lola-post.com", port="5053", rlmutil_exe="S:/Github/StudioApi/bin/rlm/rlmutil.exe")
     #pprint(server_data)
     #print(dir(server_data))
 
     # pprint(server_data.raw_data)
-    print("==========================")
+    # print("==========================")
     pprint(server_data.licenses)
-    print("==========================")
-    print("Available:")
-    pprint(server_data.counts)
-    print("Reserved:")
-    pprint(server_data.reserved)
+    # print("==========================")
+    # print("Available:")
+    # pprint(server_data.counts)
+    # print("Reserved:")
+    # pprint(server_data.reserved)
     print("==========================")
     # pprint(server_data.handles)
+    pprint(server_data.handles_by_product)
 
 
     #extract_license_data_from_rlmutil_output(get_licenses(None, port_at_server="4101@license.lola.lola-post.com", all=True))
