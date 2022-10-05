@@ -53,6 +53,24 @@ class rlmInfo():
         # parse all data and extract info
         self.parse_rlm_data()
 
+    def get_reserved_count_for_product(self, product):
+        """Returns the total number of reserved licenses for the product."""
+        reserved = 0
+        for license in self.licenses:
+            if license["product"] == product:
+                reserved += license["reserved"]
+        return reserved
+
+    def get_available_count_for_product(self, product):
+        """Returns the total number of available licenses for the product.
+        Includes the reserved licenses that are available.
+        """
+        available = 0
+        for license in self.licenses:
+            if license["product"] == product:
+                available += license["count"] + license["reserved"] - license["inuse"]
+        return available
+
     def refresh_data(self):
         self.get_data()
 
@@ -92,15 +110,18 @@ class rlmInfo():
         counts = {}
         reserved_amount = {}
         for item in license_data_list:
-            # print(item[1])
-            # first line data
+            #
+            # first line data:
             # hieroplayer_i v2022.1107, pool: 3
+            #
             license = item[0].split(" ")[0].strip()
             version = item[0].split(" ")[1].strip(",").strip()
             pool = item[0].split(" ")[2].strip()
 
-            # second line data
+            #
+            # second line data:
             # count: 15,  # reservations: 0, inuse: 0, exp: 7-nov-2022
+            #
             if "UNCOUNTED" in item[1]:
                 inuse = int(item[1].split("inuse: ")[-1])
                 count = 0
@@ -113,8 +134,10 @@ class rlmInfo():
                 exp = item[1].split("exp:")[1].strip()
 
             if item[2]:
-                # third line data
+                #
+                # third line data:
                 # obsolete: 0, min_remove: 120, total checkouts: 3
+                #
                 obsolete = int(item[2].split("obsolete:")[1].split(",")[0].strip())
                 min_remove = int(item[2].split("min_remove:")[1].split(",")[0].strip())
                 total_checkouts = int(item[2].split("total checkouts:")[1].strip())
@@ -125,6 +148,7 @@ class rlmInfo():
 
             data = {
                 "license": license,
+                "product": license,
                 "version": version,
                 "pool": pool,
                 "count": count,
