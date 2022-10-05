@@ -133,9 +133,33 @@ class rlmInfo():
                 "exp": exp,
                 "obsolete": obsolete,
                 "min_remove": min_remove,
-                "total_checkouts": total_checkouts
+                "total_checkouts": total_checkouts,
+                #
+                # Calculate how many license are available by doing some logic
+                # because count and reserved affect each other.
+                # If the license counts for 2 licenses but you reserved 1 in a reserve list
+                # then the count will be 1 and reserved will be 1, soft limit will be 2
+                "available": (count + reserved - inuse),
+                #
+                # soft_limit
+                #
+                # From RLM Manual:
+                # A license can have a soft_limit that is lower than it's count of available licenses. Once usage
+                # exceeds the soft_limit, checkout requests will return the RLM_EL_OVERSOFT status instead of a
+                # 0 status. The application's behavior in this case is entirely up to your ISV.
+                # Note that when the license server pools separate licenses into a single license pool, the soft_limit
+                # RLM License Administration Manual Page 31 of 137
+                # of each license is added to obtain the pool's soft_limit. Also note that licenses which do not specify
+                # a soft_limit use the license count as their soft_limit.
+                #
+                # "soft_limit": (count + reserved),
+                #
+                # this is a hack, it doesn't fully account for the above and could give a wrong number
             }
 
+            # Collate and store the license name and count up the data
+            # i.e. the license server will return multiple nuke_i licenses so we want to collate all
+            # under the same product and count the total lics, reserved etc
             if license in counts.keys():
                 counts[license] += count
             else:
@@ -146,8 +170,11 @@ class rlmInfo():
                 reserved_amount[license] = reserved
             licenses.append(data)
 
-            # update class info
+            # save each license in a list of licenses, this might result in
+            # multiple items with the same product name, e.g. nuke_i
             self.licenses = licenses
+
+            # store the overall license counts, reserved etc.
             self.counts = counts
             self.available = counts
             self.reserved = reserved_amount
