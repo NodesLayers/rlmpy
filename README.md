@@ -4,6 +4,8 @@ A Wrapper library for Python to get or set information on Reprise License Manage
 ## Usage
 
 ```python
+import rlmpy
+
 rlm_server_data = rlmpy.rlmInfo(
     server="rlm.mylicenseserver.com", 
     port="4101", 
