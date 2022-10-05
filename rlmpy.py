@@ -71,6 +71,15 @@ class rlmInfo():
                 available += license["count"] + license["reserved"] - license["inuse"]
         return available
 
+    def get_inuse_count_for_product(self, product):
+        """Returns the total number of licenses currently in use for the product.
+        """
+        inuse = 0
+        for license in self.licenses:
+            if license["product"] == product:
+                inuse += license["inuse"]
+        return inuse
+
     def refresh_data(self):
         self.get_data()
 
