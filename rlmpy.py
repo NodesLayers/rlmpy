@@ -125,7 +125,7 @@ class rlmInfo():
             #
             license = item[0].split(" ")[0].strip()
             version = item[0].split(" ")[1].strip(",").strip()
-            pool = item[0].split(" ")[2].strip()
+            pool = item[0].split(" ")[3].strip()
 
             #
             # second line data:
