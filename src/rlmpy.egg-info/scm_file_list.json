@@ -1,0 +1,14 @@
+{
+  "files": [
+    ".gitignore",
+    ".idea/.gitignore",
+    ".idea/inspectionProfiles/Project_Default.xml",
+    ".idea/inspectionProfiles/profiles_settings.xml",
+    ".idea/misc.xml",
+    ".idea/modules.xml",
+    ".idea/rlmpy.iml",
+    ".idea/vcs.xml",
+    "README.md",
+    "tests/test.py"
+  ]
+}
