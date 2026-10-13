@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel", "setuptools_scm[toml]>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rlmpy"
+dynamic = ["version"]
+description = "Wrapper library for Python to get or set information on Reprise License Manager servers using rlmutil."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "NodesLayers" }]
+license = { text = "MIT" }
+
+[project.urls]
+Homepage = "https://github.com/NodesLayers/rlmpy"
+Repository = "https://github.com/NodesLayers/rlmpy"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]
+version_file = "src/rlmpy/_version.py"
+fallback_version = "0.0.0"
